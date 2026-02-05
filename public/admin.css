@@ -1,0 +1,96 @@
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0b1220;
+  color:white;
+}
+
+.admin-top{
+  position:sticky;
+  top:0;
+  background:#0f172a;
+  padding:14px 16px;
+  border-bottom:1px solid #1f2937;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+button{
+  border:none;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:900;
+}
+
+#refreshBtn{
+  background:#22c55e;
+}
+
+.admin-container{
+  width:min(1100px,95%);
+  margin:18px auto;
+}
+
+.order-card{
+  background:#111827;
+  border:1px solid #1f2937;
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.order-head{
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.status{
+  font-weight:900;
+  padding:6px 10px;
+  border-radius:12px;
+}
+
+.pending{
+  background:#facc15;
+  color:black;
+}
+
+.done{
+  background:#22c55e;
+  color:black;
+}
+
+.items{
+  margin-top:10px;
+  border-top:1px solid #1f2937;
+  padding-top:10px;
+}
+
+.item-row{
+  display:flex;
+  justify-content:space-between;
+  padding:4px 0;
+}
+
+.action-row{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+}
+
+.confirm-btn{
+  background:#22c55e;
+}
+
+.done-btn{
+  background:#60a5fa;
+}
+
+.delete-btn{
+  background:#ef4444;
+  color:white;
+}

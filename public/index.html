@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restaurant QR Generator</title>
+  
+  
+  <style>
+    
+    body{
+      font-family: Arial, sans-serif;
+      background:#0b1220;
+      color:white;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      margin:0;
+    }
+    .box{
+      width:min(500px, 92vw);
+      background:#111b31;
+      padding:20px;
+      border-radius:16px;
+      box-shadow:0 10px 40px rgba(0,0,0,0.5);
+      text-align:center;
+    }
+    input{
+      width:100%;
+      padding:14px;
+      border-radius:12px;
+      border:none;
+      outline:none;
+      margin-top:10px;
+      font-size:16px;
+    }
+    button{
+      width:100%;
+      padding:14px;
+      margin-top:12px;
+      border:none;
+      border-radius:12px;
+      background:#22c55e;
+      font-weight:bold;
+      font-size:16px;
+      cursor:pointer;
+    }
+    img{
+      margin-top:15px;
+      width:260px;
+      border-radius:10px;
+      background:white;
+      padding:10px;
+    }
+    a{color:#60a5fa; word-break:break-all;}
+  </style>
+</head>
+<body>
+    
+  <div class="box">
+    <h2>🍽 Restaurant QR Generator</h2>
+    <p>Enter Table Number</p>
+    <input id="table" placeholder="Example: 1" />
+    <button onclick="generateQR()">Generate QR</button>
+
+    <div id="out"></div>
+    <div style="margin-top: 20px; text-align:center;">
+  <button id="adminBtn" style="
+    padding:12px 18px;
+    border:none;
+    border-radius:10px;
+    background:#ffb300;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+  ">
+    🔒 Admin Login
+  </button>
+</div>
+<script>
+document.getElementById("adminBtn").addEventListener("click", async () => {
+  const password = prompt("Enter Admin Password:");
+  if (!password) return;
+
+  const res = await fetch("/api/admin-login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    window.location.href = "/admin.html";
+  } else {
+    alert("❌ Wrong Password!");
+  }
+});
+</script>
+
+
+  </div>
+  
+
+  <script>
+    async function generateQR(){
+      const table = document.getElementById("table").value.trim();
+      if(!table) return alert("Enter table number");
+
+      const res = await fetch(`/generate-qr?table=${table}`);
+      const data = await res.json();
+
+      document.getElementById("out").innerHTML = `
+        <img src="${data.qr}" />
+        <p><b>URL:</b> <a href="${data.url}" target="_blank">${data.url}</a></p>
+      `;
+      
+    }
+    
+  </script>
+</body>
+</html>

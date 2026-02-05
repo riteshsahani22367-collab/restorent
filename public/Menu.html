@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restaurant Menu</title>
+  <link rel="stylesheet" href="menu.css"/>
+</head>
+<body>
+
+  <header class="topbar">
+    <div>
+      <div class="brand">🍽 Our Restaurant</div>
+      <div class="sub" id="tableText">Table: --</div>
+    </div>
+    
+  </header>
+
+  <main class="container">
+    <div class="searchRow">
+      <input id="search" placeholder="Search food... (pizza, paneer, biryani)" />
+    </div>
+
+    <section id="menuGrid" class="grid"></section>
+  </main>
+
+  <!-- Bottom fixed bar like Flipkart -->
+  <div class="bottomBar">
+    <button id="btnCart" class="btnDark">
+      🛒 Cart (<span id="cartCount">0</span>)
+    </button>
+
+    <button id="btnNext" class="btnGreen" disabled>
+      Next ➜
+    </button>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="modal hidden">
+    <div class="modalCard">
+      <div class="modalHeader">
+        <h3>🛒 Your Cart</h3>
+        <button id="closeCart" class="xbtn">✖</button>
+      </div>
+
+      <div id="cartItems" class="cartItems"></div>
+
+      <div class="cartFooter">
+        <div class="totalRow">
+          <span>Total</span>
+          <b>₹<span id="cartTotal">0</span></b>
+        </div>
+
+        <button id="goNext" class="btnGreen full" disabled>Next ➜</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="modal hidden">
+    <div class="modalCard">
+      <div class="modalHeader">
+        <h3>✅ Place Order</h3>
+        <button id="closeCheckout" class="xbtn">✖</button>
+      </div>
+
+      <div class="checkoutBox">
+        <p><b>Table Number:</b> <span id="checkoutTable"></span></p>
+        <p><b>Items:</b> <span id="checkoutCount"></span></p>
+        <p><b>Total:</b> ₹<span id="checkoutTotal"></span></p>
+
+        <button id="placeOrderBtn" class="btnGreen full">Place Order</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="menu.js"></script>
+</body>
+</html>

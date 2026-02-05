@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Ordering System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .generator {
+            display: none;
+        }
+        .order-page {
+            display: none;
+        }
+        .menu-category {
+            margin-bottom: 20px;
+        }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+        .menu-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        .item-details {
+            flex: 1;
+            margin-left: 10px;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+        }
+        .quantity button {
+            padding: 5px 10px;
+            margin: 0 5px;
+        }
+        .cart {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+        .cart.open {
+            transform: translateX(0);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+        }
+        .confirmation {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .qr-codes {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .qr-code {
+            margin: 10px;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .menu-item {
+                flex-direction: column;
+            }
+            .cart {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="generator">
+            <h1>QR Code Generator</h1>
+            <label for="num-tables">Number of Tables:</label>
+            <input type="number" id="num-tables" min="1" value="5">
+            <button onclick="generateQRs()">Generate QR Codes</button>
+            <div id="qr-codes" class="qr-codes"></div>
+        </div>
+        <div class="order-page">
+            <h1>Order for Table <span id="table-number"></span></h1>
+            <div id="menu"></div>
+            <button onclick="toggleCart()">View Cart</button>
+            <div id="cart" class="cart">
+                <h2>Cart</h2>
+                <div id="cart-items"></div>
+                <div class="total">Total: $<span id="total">0.00</span></div>
+                <button class="submit-btn" onclick="submitOrder()">Submit Order</button>
+            </div>
+            <div id="confirmation" class="confirmation">
+                <h2>Order Submitted!</h2>
+                <p>Your order has been sent to the restaurant.</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        const menuData = {
+            "Appetizers": [
+                { name: "Bruschetta", description: "Toasted bread topped with tomatoes, garlic, and basil.", price: 8.99, image: "https://via.placeholder.com/100" },
+                { name: "Calamari", description: "Fried squid rings with marinara sauce.", price: 12.99, image: "https://via.placeholder.com/100" }
+            ],
+            "Mains": [
+                { name: "Grilled Salmon", description: "Fresh salmon with vegetables.", price: 18.99, image: "https://via.placeholder.com/100" },
+                { name: "Pasta Carbonara", description: "Creamy pasta with bacon and eggs.", price: 15.99, image: "https://via.placeholder.com/100" }
+            ],
+            "Desserts": [
+                { name: "Tiramisu", description: "Classic Italian dessert.", price: 6.99, image: "https://via.placeholder.com/100" },
+                { name: "Cheesecake", description: "Rich and creamy cheesecake.", price: 7.99, image: "https://via.placeholder.com/100" }
+            ]
+        };
+
+        let cart = {};
+        let total = 0;
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function init() {
+            const table = getQueryParam('table');
+            if (table) {
+                document.querySelector('.order-page').style.display = 'block';
+                document.getElementById('table-number').textContent = table;
+                loadMenu();
+            } else {
+                document.querySelector('.generator').style.display = 'block';
+            }
+        }
+
+        function generateQRs() {
+            const numTables = parseInt(document.getElementById('num-tables').value);
+            const qrContainer = document.getElementById('qr-codes');
+            qrContainer.innerHTML = '';
+            for (let i = 1; i <= numTables; i++) {
+                const div = document.createElement('div');
+                div.className = 'qr-code';
+                div.innerHTML = `<h3>Table ${i}</h3>`;
+                const canvas = document.createElement('canvas');
+                QRCode.toCanvas(canvas, `${window.location.origin}${window.location.pathname}?table=${i}`, function (error) {
+                    if (error) console.error(error);
+                });
+                div.appendChild(canvas);
+                qrContainer.appendChild(div);
+            }
+        }
+
+        function loadMenu() {
+            const menuDiv = document.getElementById('menu');
+            for (const category in menuData) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'menu-category';
+                categoryDiv.innerHTML = `<h2>${category}</h2>`;
+                menuData[category].forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'menu-item';
+                    itemDiv.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="item-details">
+                            <h3>${item.name}</h3>
+                            <p>${item.description}</p>
+                            <p>$${item.price.toFixed(2)}</p>
+                        </div>
+                        <div class="quantity">
+                            <button onclick="changeQuantity('${item.name}', -1)">-</button>
+                            <span id="qty-${item.name}">0</span>
+                            <button onclick="changeQuantity('${item.name}', 1)">+</button>
+                        </div>
+                    `;
+                    categoryDiv.appendChild(itemDiv);
+                });
+                menuDiv.appendChild(categoryDiv);
+            }
+        }
+
+        function changeQuantity(name, delta) {
+            if (!cart[name]) cart[name] = 0;
+            cart[name] += delta;
+            if (cart[name] < 0) cart[name] = 0;
+            document.getElementById(`qty-${name}`).textContent = cart[name];
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItemsDiv = document.getElementById('cart-items');
+            cartItemsDiv.innerHTML = '';
+            total = 0;
+            for (const name in cart) {
+                if (cart[name] > 0) {
+                    const item = findItem(name);
+                    const itemTotal = cart[name] * item.price;
+                    total += itemTotal;
+                    cartItemsDiv.innerHTML += `
+                        <div class="cart-item">
+                            <span>${name} x${cart[name]}</span>
+                            <span>$${itemTotal.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        function findItem(name) {
+            for (const category in menuData) {
+                const item = menuData[category].find(i => i.name === name);
+                if (item) return item;
+            }
+        }
+
+        function toggleCart() {
+            document.getElementById('cart').classList.toggle('open');
+        }
+
+        function submitOrder() {
+            console.log('Order submitted:', cart);
+            // Simulate API call
+            alert('Order submitted! Check console for details.');
+            document.getElementById('confirmation').style.display = 'block';
+            cart = {};
+            updateCart();
+            document.getElementById('cart').classList.remove('open');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
