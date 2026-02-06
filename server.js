@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ✅ Admin password (apna rakh lo)
-const ADMIN_PASSWORD = "12345";
+const ADMIN_PASSWORD = "admin@1";
 
 // Middlewares
 app.use(express.json());
