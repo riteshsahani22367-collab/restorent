@@ -3,6 +3,17 @@ const genBtn = document.getElementById("genBtn");
 const qrImg = document.getElementById("qrImg");
 const urlText = document.getElementById("urlText");
 
+// ✅ PWA service worker register (ALWAYS)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then(() => console.log("Service Worker Registered"))
+      .catch((err) => console.log("SW failed", err));
+  });
+}
+
+// ✅ QR generate button
 genBtn.addEventListener("click", async () => {
   const table = tableInput.value.trim();
   if (!table) return alert("Table number dalo!");
@@ -12,10 +23,4 @@ genBtn.addEventListener("click", async () => {
 
   qrImg.src = data.qr;
   urlText.innerHTML = `QR URL: <b>${data.url}</b>`;
-  
 });
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js")
-    .then(() => console.log("Service Worker Registered"))
-    .catch(err => console.log("SW failed", err));
-}
