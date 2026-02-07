@@ -12,4 +12,10 @@ genBtn.addEventListener("click", async () => {
 
   qrImg.src = data.qr;
   urlText.innerHTML = `QR URL: <b>${data.url}</b>`;
+  
 });
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js");
+  });
+}
